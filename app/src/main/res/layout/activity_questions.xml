@@ -12,7 +12,7 @@
         android:layout_width="197dp"
         android:layout_height="37dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
         android:text="(?) Bloqué ? un indice ? "
         android:textColor="@color/Style_blanc"

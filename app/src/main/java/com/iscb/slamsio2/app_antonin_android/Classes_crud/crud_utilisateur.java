@@ -18,7 +18,7 @@ public class crud_utilisateur implements AsyncResponse {
     private static final String SERVERADDR = "http://192.168.43.13/crud_android/crud_utilisateur.php";
 
     //Propriété
-    class_utilisateur utilisateur_verifie = null;
+   private class_utilisateur utilisateur_verifie = null;
 
     /**
      * Retour du serveur distant
@@ -94,7 +94,6 @@ public class crud_utilisateur implements AsyncResponse {
             e.printStackTrace();
         }
         class_utilisateur user = utilisateur_verifie;
-
         utilisateur_verifie=null;
         return user;
     }
