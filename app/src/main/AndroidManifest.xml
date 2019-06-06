@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".vue.erreurinternet"></activity>
+        <activity android:name=".vue.moncompte"></activity>
+        <activity android:name=".vue.erreurinternet" />
         <activity android:name=".vue.concours" />
         <activity android:name=".vue.questions" />
         <activity android:name=".vue.mentions_legales" />

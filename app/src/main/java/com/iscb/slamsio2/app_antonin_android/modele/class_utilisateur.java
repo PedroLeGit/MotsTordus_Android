@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.iscb.slamsio2.app_antonin_android.R;
 
+import java.lang.reflect.Field;
+
 public class class_utilisateur implements Parcelable {
     //Propriétés de la classe
     private int id_utilisateur;
@@ -13,11 +15,11 @@ public class class_utilisateur implements Parcelable {
     private String pseudo_utilisateur;
     private String email_utilisateur;
     private String motdepasse_utilisateur;
-    private Integer niveau_utilisateur;
+    private int niveau_utilisateur;
     private String codeavatar_utilisateur;
 
     //Constructeur
-    public class_utilisateur(int unId_utilisateur, String unNom_utilisateur, String unPrenom_utilisateur, String unPseudo_utlisateur, String unEmail_utilisateur, String unMotdepasse_utilisateur, Integer unNiveau_utilisateur, String unCodeavatar_utilisateur){
+    public class_utilisateur(int unId_utilisateur, String unNom_utilisateur, String unPrenom_utilisateur, String unPseudo_utlisateur, String unEmail_utilisateur, String unMotdepasse_utilisateur, int unNiveau_utilisateur, String unCodeavatar_utilisateur){
         id_utilisateur = unId_utilisateur;
         nom_utilisateur = unNom_utilisateur;
         prenom_utilisateur = unPrenom_utilisateur;
@@ -35,11 +37,7 @@ public class class_utilisateur implements Parcelable {
         pseudo_utilisateur = in.readString();
         email_utilisateur = in.readString();
         motdepasse_utilisateur = in.readString();
-        if (in.readByte() == 0) {
-            niveau_utilisateur = null;
-        } else {
-            niveau_utilisateur = in.readInt();
-        }
+        niveau_utilisateur = in.readInt();
         codeavatar_utilisateur = in.readString();
     }
 
@@ -63,21 +61,22 @@ public class class_utilisateur implements Parcelable {
     public String getPseudo_utilisateur(){return pseudo_utilisateur;}
     public String getEmail_utilisateur(){return email_utilisateur;}
     public String getMotdepasse_utilisateur(){return motdepasse_utilisateur;}
-    public Integer getNiveau_utilisateur(){return niveau_utilisateur;}
+    public int getNiveau_utilisateur(){return niveau_utilisateur;}
     public String getCodeavatar_utilisateur(){return codeavatar_utilisateur;}
 
     //      Setter
-    public void setNom_utilisateur(String data){nom_utilisateur = data;}
-    public void setPrenom_utilisateur(String data){prenom_utilisateur = data;}
-    public void setPseudo_utilisateur(String data){pseudo_utilisateur = data;}
-    public void setEmail_utilisateur(String data){email_utilisateur = data;}
-    public void setMotdepasse_utilisateur(String data){motdepasse_utilisateur = data;}
-    public void setNiveau_utilisateur(Integer data){niveau_utilisateur = data;}
-    public void setCodeavatar_utilisateur(String data){codeavatar_utilisateur = data;}
+    // public void setNom_utilisateur(String data){nom_utilisateur = data;}
+    // public void setPrenom_utilisateur(String data){prenom_utilisateur = data;}
+    // public void setPseudo_utilisateur(String data){pseudo_utilisateur = data;}
+    // public void setEmail_utilisateur(String data){email_utilisateur = data;}
+    // public void setMotdepasse_utilisateur(String data){motdepasse_utilisateur = data;}
+    // public void setNiveau_utilisateur(Integer data){niveau_utilisateur = data;}
+    // public void setCodeavatar_utilisateur(String data){codeavatar_utilisateur = data;}
 
 
 
     //Methodes utiles
+
     @Override
     public int describeContents() {
         return 0;
@@ -93,22 +92,6 @@ public class class_utilisateur implements Parcelable {
         dest.writeString(motdepasse_utilisateur);
         dest.writeInt(niveau_utilisateur);
         dest.writeString(codeavatar_utilisateur);
-    }
-
-    public int getIdAvatar(){
-        int result;
-        switch (codeavatar_utilisateur){
-            case "girl":
-                    result = R.drawable.girl;
-                break;
-            case "boy":
-                    result = R.drawable.boy;
-                break;
-            default:
-                result = R.drawable.man;
-                break;
-        }
-        return result;
     }
 }
 

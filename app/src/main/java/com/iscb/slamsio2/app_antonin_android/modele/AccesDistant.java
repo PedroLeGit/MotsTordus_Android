@@ -8,8 +8,6 @@ import com.iscb.slamsio2.app_antonin_android.outils.AsyncResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.concurrent.TimeUnit;
 
 public class AccesDistant implements AsyncResponse {

@@ -16,21 +16,21 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/style_bouton"
-        android:text="Concours à venir"
+        android:text="Concours"
         android:textColor="@color/Style_blanc"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_gotoquizz"
-        app:layout_constraintVertical_bias="0.098" />
+        app:layout_constraintVertical_bias="0.126" />
 
     <Button
         android:id="@+id/btn_gotoquizz"
         android:layout_width="168dp"
         android:layout_height="49dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/style_bouton"
         android:text="Participer"
@@ -44,14 +44,14 @@
         android:id="@+id/btn_gotomoncompte"
         android:layout_width="168dp"
         android:layout_height="50dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="44dp"
         android:background="@drawable/style_bouton"
         android:text="Mon compte"
         android:textColor="@color/Style_blanc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/img_avatar" />
+        app:layout_constraintTop_toBottomOf="@+id/lbl_pseudo" />
 
     <ImageView
         android:id="@+id/img_avatar"
@@ -63,8 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_gotodeconnexion"
-        tools:srcCompat="@drawable/man-1" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_gotodeconnexion" />
 
     <Button
         android:id="@+id/btn_gotodeconnexion"
@@ -77,4 +76,18 @@
         android:textColor="@color/Style_blanc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/lbl_pseudo"
+        android:layout_width="169dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="********"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_avatar" />
 </android.support.constraint.ConstraintLayout>

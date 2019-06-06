@@ -1,93 +1,102 @@
 package com.iscb.slamsio2.app_antonin_android.Classes_crud;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+
+import android.util.Log;
 
 import com.iscb.slamsio2.app_antonin_android.modele.class_utilisateur;
-import com.iscb.slamsio2.app_antonin_android.outils.MySQLiteOpenHelper;
+import com.iscb.slamsio2.app_antonin_android.outils.AccesHTTP;
+import com.iscb.slamsio2.app_antonin_android.outils.AsyncResponse;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class crud_utilisateur {
+import java.util.concurrent.TimeUnit;
 
-    //propriétes
-    private String nomBase = "MotsTordus.sqlite";
-    private Integer versionBase = 1;
-    private MySQLiteOpenHelper accesBD;
-    private SQLiteDatabase bd;
+public class crud_utilisateur implements AsyncResponse {
 
-    public crud_utilisateur(Context contexte){
-        accesBD = new MySQLiteOpenHelper(contexte,nomBase,null,versionBase);
-        // il faut créer la base si n'existe pas
-        bd = accesBD.getWritableDatabase();
-        accesBD.onCreate(bd);
-        tempInitData();
-    }
+    //Constante de classe
+    private static final String SERVERADDR = "http://192.168.43.13/crud_android/crud_utilisateur.php";
 
-    public void ajoutUtilisateur(class_utilisateur utilisateur){
-        bd = accesBD.getWritableDatabase();
-        String req = "INSERT INTO utilisateur (nom_utilisateur, prenom_utilisateur,pseudo_utilisateur,email_utilisateur,motdepasse_utilisateur,niveau_utilisateur,codeavatar_utilisateur) VALUES ";
-        req += "(\""+ utilisateur.getNom_utilisateur() +"\",\""+utilisateur.getPrenom_utilisateur()+"\",\""+utilisateur.getPseudo_utilisateur()+"\",\""+utilisateur.getEmail_utilisateur()+"\",\""+utilisateur.getMotdepasse_utilisateur()+"\",\""+utilisateur.getNiveau_utilisateur()+"\",\""+utilisateur.getCodeavatar_utilisateur()+"\");";
-        bd.execSQL(req);
-    }
+    //Propriété
+    class_utilisateur utilisateur_verifie = null;
 
-    public class_utilisateur recupUtilisateurByID(int id){
-        class_utilisateur user = null;
-        bd = accesBD.getReadableDatabase();
-        String req = "";
-        // intérêt de faire une requête vide ?
-        req = "SELECT nom_utilisateur, prenom_utilisateur, pseudo_utilisateur,email_utilisateur,motdepasse_utilisateur,niveau_utilisateur,codeavatar_utilisateur" +
-                " FROM utilisateur WHERE id_utilisateur = "+ id +";";
-        Cursor curseur = bd.rawQuery(req,null);
-        //if (curseur.getCount()==1){
-        //si votre programme est bien fait il y a OBLIGATOIREMENT un enregistrement !
-        if (curseur.moveToFirst()){
-            // curseur.moveToFirst();
-            /* faites PROPREMENT ....
-            String nom = curseur.getString(1);
-            String prenom = curseur.getString(2);
-            String pseudo = curseur.getString(3);
-            String email = curseur.getString(4);
-            String motdepasse = curseur.getString(5);
-            Integer niveau = curseur.getInt(6);
-            String codeavatar = curseur.getString(7);
-            */
-            String nom = curseur.getString(curseur.getColumnIndex("nom_utilisateur"));
-            String prenom = curseur.getString(curseur.getColumnIndex("prenom_utilisateur"));
-            String pseudo = curseur.getString(curseur.getColumnIndex("pseudo_utilisateur"));
-            String email = curseur.getString(curseur.getColumnIndex("email_utilisateur"));
-            String motdepasse = curseur.getString(curseur.getColumnIndex("motdepasse_utilisateur"));
-            Integer niveau = curseur.getInt(curseur.getColumnIndex("niveau_utilisateur"));
-            String codeavatar = curseur.getString(curseur.getColumnIndex("codeavatar_utilisateur"));
+    /**
+     * Retour du serveur distant
+     * @param output
+     */
+    @Override
+    public void processFinish(String output) {
+        Log.d("serveur","******************************"+output);
+        //découpage du message reçu avec %
+        String[] message = output.split("%");
 
-            user = new class_utilisateur(id,nom,prenom,pseudo,email,motdepasse,niveau,codeavatar);
+        if(message.length>1){
+            if (message[0].equals("verificationLogin")){
+                Log.d("verificationLogin", "************************************"+message[1]);
+                if(!message[1].equals("InvalidLogin")) {
+                    try {
+                        Log.d("CHECKPOINT", "**********************************************************Traitement de l'entree");
+                        JSONArray info = new JSONArray(message[1]);
+                        int id = info.getJSONObject(0).getInt("id_utilisateur");
+                        String nom = info.getJSONObject(0).getString("nom_utilisateur");
+                        String prenom = info.getJSONObject(0).getString("prenom_utilisateur");
+                        String pseudo = info.getJSONObject(0).getString("pseudo_utilisateur");
+                        String email = info.getJSONObject(0).getString("email_utilisateur");
+                        String mdp = info.getJSONObject(0).getString("motdepasse_utilisateur");
+                        int niveau = info.getJSONObject(0).getInt("niveau_utilisateur");
+                        String avatar = info.getJSONObject(0).getString("codeavatar_utilisateur");
+                        class_utilisateur utilisateur = new class_utilisateur(id, nom, prenom, pseudo, email, mdp, niveau, avatar);
+                        utilisateur_verifie = utilisateur;
+                        Log.d("CHECKPOINT", "**********************************************************UTILISATEUR AFFECTER");
+                    } catch (JSONException e) {
+                        Log.d("Erreur JSON: ", "*************************************" + e);
+                    }
+                }
+            }
+            if (message[0].equals("getVictoryAndParticipationByCategory")){
+                Log.d("VAndPByCategory", "*****************************************"+message[1]);
+                try{
+                    JSONArray info = new JSONArray(message[1]);
+                    JSONObject data = info.getJSONObject(0);
+                    int victoire = data.getInt("") ;
+                    int participation = data.getInt("");
+                }catch (JSONException e){
+                    Log.d("Erreur JSON", "*****************************************" + e);
+                }
+            }
         }
+    }
+
+    public void envoi(String operation, JSONArray lesDonnesJSON){
+        AccesHTTP accesDonnes = new AccesHTTP();
+        //lien de délegation
+        accesDonnes.delegate = this;
+        //ajout paramettre
+        accesDonnes.addParam("operation", operation);
+        accesDonnes.addParam("lesdonnes", lesDonnesJSON.toString());
+        //appel au serveur
+        accesDonnes.execute(SERVERADDR);
+    }
+
+    public void demande_verifConnexion(String Login, String mdp){
+        AccesHTTP accesDonnes = new AccesHTTP();
+        accesDonnes.delegate = this;
+        accesDonnes.addParam("operation", "verificationLogin");
+        accesDonnes.addParam("login", Login);
+        accesDonnes.addParam("mdp", mdp);
+        accesDonnes.execute(SERVERADDR);
+    }
+
+    public class_utilisateur getUtilisateur_verifie(){
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        class_utilisateur user = utilisateur_verifie;
+
+        utilisateur_verifie=null;
         return user;
     }
-
-    public String verifConnexion(String username, String motdepasse) {
-        String loginOK = "false";
-        bd = accesBD.getReadableDatabase();
-        String req;
-        if (username.contains("@")) {
-            req = "SELECT id_utilisateur FROM utilisateur WHERE email_utilisateur LIKE \"" + username + "\" AND motdepasse_utilisateur LIKE \"" + motdepasse + "\";";
-        } else {
-            req = "SELECT id_utilisateur FROM utilisateur WHERE pseudo_utilisateur LIKE \"" + username + "\" AND motdepasse_utilisateur LIKE \"" + motdepasse + "\";";
-        }
-        Cursor curseur = bd.rawQuery(req, null);
-        if (curseur.getCount() == 1) {
-            //loginOK = curseur.getString(0);
-            // vous ne lisez même pas me curseur !
-            curseur.moveToFirst();
-            //essayez proprement ....sachant que votre logique est peu juste car vous récupérer un Id de type entier pour
-            // le convertir en chaine qui ressemeble franchement à une utilisation de booléen !!!
-            loginOK = String.valueOf(curseur.getInt(curseur.getColumnIndex("id_utilisateur")));
-        }
-        return loginOK;
-    }
-    public void tempInitData(){
-        class_utilisateur Antonin = new class_utilisateur(1,"RICHARD","Antonin","arichard","richard.antonin@outlook.fr","test37", 1,"man");
-        class_utilisateur Pierre = new class_utilisateur(2,"PLAUD","Pierre-Amaury","pedro","pedro@gmail.com","37test",2,"boy.jpg");
-        this.ajoutUtilisateur(Antonin);
-        this.ajoutUtilisateur(Pierre);
-    }
 }
+
